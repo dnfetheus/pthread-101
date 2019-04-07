@@ -5,8 +5,10 @@
 int main(){
     int num_threads;
 
-    printf("Digite o número de threads a ser usada");
+    printf("Enter with the number of threads you wish to create\n");
     scanf("%d", &num_threads);
+
+    printf("Number of threads: %d\n", num_threads);
 
     return 0;
 }
