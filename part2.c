@@ -7,7 +7,7 @@
 
 int array[SIZE];
 
-void a_remove(int array[], int index){
+void a_remove(int index){
     for(int i = index; i < SIZE - 1; i++){
         array[i] = array[i + 1];
     }
@@ -17,15 +17,29 @@ void a_remove(int array[], int index){
     }
 }
 
-void *iterate_array(void *m){
-    int mode = (int) (intptr_t) m;
+void *remove_even(){
     for(int i = 0; i < SIZE; i++){
-        if(mode == 0 && array[i] % 2 == 0){
-            a_remove(array, i);
+        if(array[i] % 2 == 0){
+            a_remove(i);
         }
+    }
+}
 
-        else if(mode == 1 && array[i] % 2 != 0){
-            a_remove(array, i);
+void *remove_prime(){
+    int is_prime;
+
+    for(int i = 0; i < SIZE; i++){
+        is_prime = 1;
+
+        for(int j = 2; j <= array[i]/2; j++){
+            if(array[i] % j == 0){
+                is_prime = 0;
+                break;
+            }
+        }
+        
+        if(is_prime){
+            a_remove(i);
         }
     }
 }
@@ -40,8 +54,8 @@ int main(){
         array[i] = (rand() % 100) + 1;
     }
 
-    pthread_create(&threads[0], NULL, iterate_array, (void*) (intptr_t) 0);
-    pthread_create(&threads[1], NULL, iterate_array, (void*) (intptr_t) 1);
+    pthread_create(&threads[0], NULL, remove_even, NULL);
+    pthread_create(&threads[1], NULL, remove_prime, NULL);
 
     pthread_exit(NULL);
 }
