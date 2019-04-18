@@ -58,13 +58,7 @@ void *remove_even(void *o){
 
     for(int i = 0; i < SIZE; i++){
         if(array[i] != 0 && array[i] % 2 == 0){
-            if(n == 0){
-                a_remove(i--);
-            }
-
-            else{
-                a_remove_mutex(i--);
-            }
+            n == 0 ? a_remove(i--) : a_remove_mutex(i--);
         }
     }
 }
@@ -73,6 +67,10 @@ void *remove_prime(void *o){
     int is_prime, n = (int) (intptr_t) o;
 
     for(int i = 0; i < SIZE; i++){
+        if(array[i] == 0){
+            continue;
+        }
+
         is_prime = 1;
 
         for(int j = 2; j * j <= array[i]; j++){
@@ -82,16 +80,8 @@ void *remove_prime(void *o){
             }
         }
 
-        if(is_prime == 1 && array[i] != 0){
-            if(n == 0){
-                a_remove(i--);
-            }
-
-            else{
-                a_remove_mutex(i--);
-            }
-
-            continue;
+        if(is_prime == 1){
+            n == 0 ? a_remove(i--) : a_remove_mutex(i--);
         }
     }
 }
