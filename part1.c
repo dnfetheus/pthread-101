@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/syscall.h>
@@ -8,10 +7,7 @@
 void* hello_thread(void *i){
     int n = (int) (intptr_t) i;
 
-    printf("Eu sou a thread%d e meu ID é %u pelo pthread_self()\n", n, pthread_self());
-    printf("Eu sou a thread%d e meu ID é %u pelo gettid()\n\n", n, syscall(SYS_gettid));
-
-    pthread_exit(NULL);
+    printf("Eu sou a thread%d\nMeu ID é %u pelo pthread_self()\nMeu ID é %u pelo gettid()\n\n", n, pthread_self(), syscall(SYS_gettid));
 }
 
 int main(){
@@ -27,5 +23,9 @@ int main(){
         pthread_create(&threads[i], NULL, hello_thread, (void*) (intptr_t) (i + 1));
     }
 
-    pthread_exit(NULL);
+    for(int i = 0; i < num_threads; i++){
+        pthread_join(threads[i], NULL);
+    }
+
+    return 0;
 }
