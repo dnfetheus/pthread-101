@@ -7,7 +7,7 @@
 void* hello_thread(void *i){
     int n = (int) (intptr_t) i;
 
-    printf("Eu sou a thread%d\nMeu ID é %u pelo pthread_self()\nMeu ID é %u pelo gettid()\n\n", n, pthread_self(), syscall(SYS_gettid));
+    printf("Eu sou a thread%d\nMeu ID é %lu pelo pthread_self()\nMeu ID é %lu pelo gettid()\n\n", n, pthread_self(), syscall(SYS_gettid));
 }
 
 int main(){
