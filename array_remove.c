@@ -97,6 +97,7 @@ int main(){
     pthread_create(&threads[1], NULL, remove_prime, (void*) (intptr_t) 0);
     pthread_join(threads[0], NULL);
     pthread_join(threads[1], NULL);
+    printf("Depois de finalizada as threads\n");
     a_dump(20);
 
     a_fulfill();
@@ -107,7 +108,8 @@ int main(){
     pthread_create(&threads[0], NULL, remove_even, (void*) (intptr_t) 1);
     pthread_create(&threads[1], NULL, remove_prime, (void*) (intptr_t) 1);
     pthread_join(threads[0], NULL);
-    pthread_join(threads[1], NULL);
+    pthread_join(threads[1], NULL);    
+    printf("Depois de finalizada as threads\n");
     a_dump(20);
     sem_destroy(&mutex);
 

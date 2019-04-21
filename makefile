@@ -1,13 +1,14 @@
 CC=gcc
 
-all:part1 part2
+all:hello array
 
-part1:
-		$(CC) part1.c -o part1.out -lpthread
+hello:
+	$(CC) hello_thread.c -o hello.out -lpthread
 
-part2:
-		$(CC) part2.c -o part2.out -lpthread -lrt
+array:
+	$(CC) array_remove.c -o array.out -lpthread -lrt
 
 clean:
-	rm *.o
-	rm *.out
+	rm *.out || true
+	rm *.o || true
+	rm *.obj || true
