@@ -91,25 +91,27 @@ int main(){
     pthread_t threads[2];
     a_fulfill();
 
-    printf("Não usando semaforos\n");
+    printf("Not using semaphores\n\n");
+    printf("Original array:\n");
     a_dump(20);
     pthread_create(&threads[0], NULL, remove_even, (void*) (intptr_t) 0);
     pthread_create(&threads[1], NULL, remove_prime, (void*) (intptr_t) 0);
     pthread_join(threads[0], NULL);
     pthread_join(threads[1], NULL);
-    printf("Depois de finalizada as threads\n");
+    printf("Array after using threads:\n");
     a_dump(20);
 
     a_fulfill();
 
-    printf("Usando semaforos\n");
+    printf("Using semaphores\n\n");
     sem_init(&mutex, 1, 1);
+    printf("Original Array:\n");
     a_dump(20);
     pthread_create(&threads[0], NULL, remove_even, (void*) (intptr_t) 1);
     pthread_create(&threads[1], NULL, remove_prime, (void*) (intptr_t) 1);
     pthread_join(threads[0], NULL);
     pthread_join(threads[1], NULL);    
-    printf("Depois de finalizada as threads\n");
+    printf("Array after using threads:\n");
     a_dump(20);
     sem_destroy(&mutex);
 

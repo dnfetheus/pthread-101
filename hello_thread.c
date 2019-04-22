@@ -7,14 +7,14 @@
 void* hello_thread(void *i){
     int n = (int) (intptr_t) i;
 
-    printf("Eu sou a thread%d\nMeu ID é %lu pelo pthread_self()\nMeu ID é %lu pelo gettid()\n\n", n, pthread_self(), syscall(SYS_gettid));
+    printf("I'm thread%d\nMy ID is %lu according to pthread_self()\nMy ID is %lu according to gettid()\n\n", n, pthread_self(), syscall(SYS_gettid));
 }
 
 int main(){
     int num_threads;
     int result;
 
-    printf("Digite o numero de threads que deseja executar\n");
+    printf("Enter with the number of threads to execute\n");
     scanf("%d", &num_threads);
 
     pthread_t threads[num_threads];

@@ -53,3 +53,4 @@ dkms.conf
 
 # VSCode undesired folders
 ipch/
+.vscode/
