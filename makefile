@@ -1,6 +1,6 @@
 CC=gcc
 
-all:hello array
+all: hello array
 
 hello:
 	$(CC) hello_thread.c -o hello.out -lpthread
