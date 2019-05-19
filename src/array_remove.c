@@ -14,15 +14,7 @@ void a_remove(int index){
         array[i] = array[i + 1];
     }
 
-    if(array[SIZE - 1] != 0){
-        array[SIZE - 1] = 0;
-    }
-}
-
-void a_remove_mutex(int index){
-    sem_wait(&mutex);
-    a_remove(index);
-    sem_post(&mutex);
+    array[SIZE - 1] = 0;
 }
 
 void a_fulfill(){
@@ -56,16 +48,28 @@ void a_dump(int max){
 void *remove_even(void *o){
     int n = (int) (intptr_t) o;
 
+    if(n == 1){
+      sem_wait(&mutex);
+    }
+
     for(int i = 0; i < SIZE; i++){
         if(array[i] != 0 && array[i] % 2 == 0){
-            n == 0 ? a_remove(i--) : a_remove_mutex(i--);
+            a_remove(i--);
         }
+    }
+    
+    if(n == 1){
+      sem_post(&mutex);
     }
 }
 
 void *remove_prime(void *o){
     int is_prime, n = (int) (intptr_t) o;
 
+    if(n == 1){
+      sem_wait(&mutex);
+    }
+    
     for(int i = 0; i < SIZE; i++){
         if(array[i] == 0){
             continue;
@@ -81,8 +85,12 @@ void *remove_prime(void *o){
         }
 
         if(is_prime == 1){
-            n == 0 ? a_remove(i--) : a_remove_mutex(i--);
+            a_remove(i--);
         }
+    }
+
+    if(n == 1){
+      sem_post(&mutex);
     }
 }
 
@@ -93,26 +101,26 @@ int main(){
 
     printf("Not using semaphores\n\n");
     printf("Original array:\n");
-    a_dump(20);
+    a_dump(50);
     pthread_create(&threads[0], NULL, remove_even, (void*) (intptr_t) 0);
     pthread_create(&threads[1], NULL, remove_prime, (void*) (intptr_t) 0);
     pthread_join(threads[0], NULL);
     pthread_join(threads[1], NULL);
     printf("Array after using threads:\n");
-    a_dump(20);
+    a_dump(50);
 
     a_fulfill();
 
     printf("Using semaphores\n\n");
     sem_init(&mutex, 1, 1);
     printf("Original Array:\n");
-    a_dump(20);
+    a_dump(50);
     pthread_create(&threads[0], NULL, remove_even, (void*) (intptr_t) 1);
     pthread_create(&threads[1], NULL, remove_prime, (void*) (intptr_t) 1);
     pthread_join(threads[0], NULL);
     pthread_join(threads[1], NULL);    
     printf("Array after using threads:\n");
-    a_dump(20);
+    a_dump(50);
     sem_destroy(&mutex);
 
     return 0;
