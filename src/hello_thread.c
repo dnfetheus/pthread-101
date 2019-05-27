@@ -5,9 +5,9 @@
 #include <stdint.h>
 
 void* hello_thread(void *i){
-    int n = (int) (intptr_t) i;
+    int n = (int) (intptr_t) i + 1;
 
-    printf("I'm thread%d\nMy ID is %lu according to pthread_self()\nMy ID is %lu according to gettid()\n\n", n, pthread_self(), syscall(SYS_gettid));
+    printf("I'm thread%02d\nMy ID is %lu according to pthread_self()\nMy ID is %lu according to gettid()\n\n", n, pthread_self(), syscall(SYS_gettid));
 }
 
 int main(){
@@ -20,7 +20,7 @@ int main(){
     pthread_t threads[num_threads];
 
     for(int i = 0; i < num_threads; i++){
-        pthread_create(&threads[i], NULL, hello_thread, (void*) (intptr_t) (i + 1));
+        pthread_create(&threads[i], NULL, hello_thread, (void*) (intptr_t) (i));
     }
 
     for(int i = 0; i < num_threads; i++){

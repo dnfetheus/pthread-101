@@ -18,9 +18,7 @@ void a_remove(int index){
 }
 
 void a_fulfill(){
-    time_t t;
-
-    srand((unsigned) time(&t));
+    srand((unsigned) time(NULL));
 
     for(int i = 0; i < SIZE; i++){
         array[i] = (rand() % 100) + 1;
@@ -32,7 +30,7 @@ void a_dump(int max){
         max = SIZE;
     }
 
-    printf("[ ");
+    printf("{ ");
 
     for(int i = 0; i < max; i++){
         printf("%d", array[i]);
@@ -42,7 +40,7 @@ void a_dump(int max){
         }
     }
 
-    printf(" ]\n");
+    printf(" }\n");
 }
 
 void *remove_even(void *o){
@@ -99,8 +97,8 @@ int main(){
     pthread_t threads[2];
     a_fulfill();
 
-    printf("Not using semaphores\n\n");
-    printf("Original array:\n");
+    printf("Without semaphores\n\n");
+    printf("Generated array:\n");
     a_dump(50);
     pthread_create(&threads[0], NULL, remove_even, (void*) (intptr_t) 0);
     pthread_create(&threads[1], NULL, remove_prime, (void*) (intptr_t) 0);
@@ -111,9 +109,9 @@ int main(){
 
     a_fulfill();
 
-    printf("Using semaphores\n\n");
+    printf("With semaphores\n\n");
     sem_init(&mutex, 1, 1);
-    printf("Original Array:\n");
+    printf("Generated array:\n");
     a_dump(50);
     pthread_create(&threads[0], NULL, remove_even, (void*) (intptr_t) 1);
     pthread_create(&threads[1], NULL, remove_prime, (void*) (intptr_t) 1);
