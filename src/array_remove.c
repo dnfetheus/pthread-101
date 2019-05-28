@@ -30,7 +30,7 @@ void a_dump(int max){
         max = SIZE;
     }
 
-    printf("{ ");
+    printf("[ ");
 
     for(int i = 0; i < max; i++){
         printf("%d", array[i]);
@@ -40,7 +40,7 @@ void a_dump(int max){
         }
     }
 
-    printf(" }\n");
+    printf(" ]");
 }
 
 void *remove_even(void *o){
@@ -97,27 +97,30 @@ int main(){
     pthread_t threads[2];
     a_fulfill();
 
-    printf("Without semaphores\n\n");
-    printf("Generated array:\n");
+    printf("Without semaphores\n");
+    printf("Part of generated array:\n");
     a_dump(50);
+    printf("\n");
     pthread_create(&threads[0], NULL, remove_even, (void*) (intptr_t) 0);
     pthread_create(&threads[1], NULL, remove_prime, (void*) (intptr_t) 0);
     pthread_join(threads[0], NULL);
     pthread_join(threads[1], NULL);
-    printf("Array after using threads:\n");
+    printf("Part of array after executing threads:\n");
     a_dump(50);
+    printf("\n\n");
 
     a_fulfill();
 
-    printf("With semaphores\n\n");
+    printf("With semaphores\n");
     sem_init(&mutex, 1, 1);
-    printf("Generated array:\n");
+    printf("Part of generated array:\n");
     a_dump(50);
+    printf("\n");
     pthread_create(&threads[0], NULL, remove_even, (void*) (intptr_t) 1);
     pthread_create(&threads[1], NULL, remove_prime, (void*) (intptr_t) 1);
     pthread_join(threads[0], NULL);
     pthread_join(threads[1], NULL);    
-    printf("Array after using threads:\n");
+    printf("Part of array after executing threads:\n");
     a_dump(50);
     sem_destroy(&mutex);
 
