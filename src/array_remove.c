@@ -1,128 +1,134 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <stdint.h>
-#include <semaphore.h>
 
 #define SIZE 100000
 
-int array[SIZE];
-sem_t mutex;
+typedef struct custom_array{
+    int size;
+    int data[SIZE];
+} array_t;
 
-void a_remove(int index){
-    for(int i = index; i < SIZE - 1; i++){
-        array[i] = array[i + 1];
+array_t array;
+pthread_mutex_t mutex;
+
+void array_remove(int index){
+    for(int i = index; i < array.size; i++){
+        array.data[i] = array.data[i + 1];
     }
 
-    array[SIZE - 1] = 0;
+    array.size--;
 }
 
-void a_fulfill(){
+void array_fulfill(){
     srand((unsigned) time(NULL));
+    array.size = SIZE;
 
-    for(int i = 0; i < SIZE; i++){
-        array[i] = (rand() % 100) + 1;
+    for(int i = 0; i < array.size; i++){
+        array.data[i] = (rand() % 100) + 1;
     }
 }
 
-void a_dump(int max){
-    if(max > SIZE){
-        max = SIZE;
+void array_dump(int max){
+    if(max > array.size){
+        max = array.size;
     }
 
-    printf("[ ");
+    printf("{ ");
 
     for(int i = 0; i < max; i++){
-        printf("%d", array[i]);
+        printf("%d", array.data[i]);
         
         if(i < max - 1){
             printf(", ");
         }
     }
 
-    printf(" ]");
+    printf(" }");
 }
 
 void *remove_even(void *o){
-    int n = (int) (intptr_t) o;
+    int *n = o;
 
-    if(n == 1){
-      sem_wait(&mutex);
+    if(*n == 1){
+      pthread_mutex_lock(&mutex);
     }
 
-    for(int i = 0; i < SIZE; i++){
-        if(array[i] != 0 && array[i] % 2 == 0){
-            a_remove(i--);
+    for(int i = 0; i < array.size; i++){
+        if(array.data[i] != 0 && array.data[i] % 2 == 0){
+            array_remove(i--);
         }
     }
-    
-    if(n == 1){
-      sem_post(&mutex);
+
+    if(*n == 1){
+      pthread_mutex_unlock(&mutex);
     }
 }
 
 void *remove_prime(void *o){
-    int is_prime, n = (int) (intptr_t) o;
+    int is_prime, *n = o;
 
-    if(n == 1){
-      sem_wait(&mutex);
+    if(*n == 1){
+      pthread_mutex_lock(&mutex);
     }
     
-    for(int i = 0; i < SIZE; i++){
-        if(array[i] == 0){
+    for(int i = 0; i < array.size; i++){
+        if(array.data[i] == 0){
             continue;
         }
 
         is_prime = 1;
 
-        for(int j = 2; j * j <= array[i]; j++){
-            if(array[i] % j == 0){
+        for(int j = 2; j * j <= array.data[i]; j++){
+            if(array.data[i] % j == 0){
                 is_prime = 0;
                 break;
             }
         }
 
         if(is_prime == 1){
-            a_remove(i--);
+            array_remove(i--);
         }
     }
 
-    if(n == 1){
-      sem_post(&mutex);
+    if(*n == 1){
+      pthread_mutex_unlock(&mutex);
     }
 }
 
 
 int main(){
     pthread_t threads[2];
-    a_fulfill();
+    int option = 0;
+    array_fulfill();
 
     printf("Without semaphores\n");
     printf("Part of generated array:\n");
-    a_dump(50);
+    array_dump(50);
     printf("\n");
-    pthread_create(&threads[0], NULL, remove_even, (void*) (intptr_t) 0);
-    pthread_create(&threads[1], NULL, remove_prime, (void*) (intptr_t) 0);
+    pthread_create(&threads[0], NULL, remove_even, &option);
+    pthread_create(&threads[1], NULL, remove_prime, &option);
     pthread_join(threads[0], NULL);
     pthread_join(threads[1], NULL);
     printf("Part of array after executing threads:\n");
-    a_dump(50);
+    array_dump(50);
     printf("\n\n");
 
-    a_fulfill();
+    option++;
+    array_fulfill();
 
     printf("With semaphores\n");
-    sem_init(&mutex, 1, 1);
+    pthread_mutex_init(&mutex, NULL);
     printf("Part of generated array:\n");
-    a_dump(50);
+    array_dump(50);
     printf("\n");
-    pthread_create(&threads[0], NULL, remove_even, (void*) (intptr_t) 1);
-    pthread_create(&threads[1], NULL, remove_prime, (void*) (intptr_t) 1);
+    pthread_create(&threads[0], NULL, remove_even, &option);
+    pthread_create(&threads[1], NULL, remove_prime, &option);
     pthread_join(threads[0], NULL);
     pthread_join(threads[1], NULL);    
     printf("Part of array after executing threads:\n");
-    a_dump(50);
-    sem_destroy(&mutex);
+    array_dump(50);
+    pthread_mutex_destroy(&mutex);
 
     return 0;
 }
