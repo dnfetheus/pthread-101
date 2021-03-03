@@ -4,7 +4,7 @@
 
 #define SIZE 100000
 
-typedef struct custom_array{
+typedef struct {
     int size;
     int data[SIZE];
 } array_t;
@@ -12,97 +12,97 @@ typedef struct custom_array{
 array_t array;
 pthread_mutex_t mutex;
 
-void array_remove(int index){
-    for(int i = index; i < array.size; i++){
+void array_remove(int index) {
+    for (int i = index; i < array.size; i++) {
         array.data[i] = array.data[i + 1];
     }
 
     array.size--;
 }
 
-void array_fulfill(){
+void array_fulfill() {
     srand((unsigned) time(NULL));
     array.size = SIZE;
 
-    for(int i = 0; i < array.size; i++){
+    for (int i = 0; i < array.size; i++) {
         array.data[i] = (rand() % 100) + 1;
     }
 }
 
-void array_dump(int max){
-    if(max > array.size){
+void array_dump(int max) {
+    if (max > array.size) {
         max = array.size;
     }
 
     printf("{ ");
 
-    for(int i = 0; i < max; i++){
+    for (int i = 0; i < max; i++) {
         printf("%d", array.data[i]);
         
-        if(i < max - 1){
+        if (i < max - 1) {
             printf(", ");
         }
     }
 
-    printf(" }");
+    printf(" }\n");
 }
 
-void *remove_even(void *o){
+void *remove_even(void *o) {
     int *n = o;
 
-    if(*n == 1){
+    if (*n == 1) {
       pthread_mutex_lock(&mutex);
     }
 
-    for(int i = 0; i < array.size; i++){
-        if(array.data[i] != 0 && array.data[i] % 2 == 0){
+    for (int i = 0; i < array.size; i++) {
+        if (array.data[i] != 0 && array.data[i] % 2 == 0) {
             array_remove(i--);
         }
     }
 
-    if(*n == 1){
+    if (*n == 1) {
       pthread_mutex_unlock(&mutex);
     }
 }
 
-void *remove_prime(void *o){
+void *remove_prime(void *o) {
     int is_prime, *n = o;
 
-    if(*n == 1){
+    if (*n == 1) {
       pthread_mutex_lock(&mutex);
     }
     
-    for(int i = 0; i < array.size; i++){
-        if(array.data[i] == 0){
+    for (int i = 0; i < array.size; i++) {
+        if (array.data[i] == 0) {
             continue;
         }
 
         is_prime = 1;
 
-        for(int j = 2; j * j <= array.data[i]; j++){
+        for (int j = 2; j * j <= array.data[i]; j++) {
             if(array.data[i] % j == 0){
                 is_prime = 0;
                 break;
             }
         }
 
-        if(is_prime == 1){
+        if (is_prime == 1) {
             array_remove(i--);
         }
     }
 
-    if(*n == 1){
+    if (*n == 1) {
       pthread_mutex_unlock(&mutex);
     }
 }
 
 
-int main(){
+int main() {
     pthread_t threads[2];
     int option = 0;
     array_fulfill();
 
-    printf("Without semaphores\n");
+    printf("Without mutexes\n");
     printf("Part of generated array:\n");
     array_dump(50);
     printf("\n");
@@ -114,10 +114,10 @@ int main(){
     array_dump(50);
     printf("\n\n");
 
-    option++;
+    option = 1;
     array_fulfill();
 
-    printf("With semaphores\n");
+    printf("With mutexes\n");
     pthread_mutex_init(&mutex, NULL);
     printf("Part of generated array:\n");
     array_dump(50);

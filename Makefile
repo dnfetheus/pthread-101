@@ -3,10 +3,10 @@ CC=gcc
 all: hello array
 
 hello:
-	$(CC) src/hello_thread.c -o hello.out -lpthread
+	$(CC) src/hello_thread.c -o hello_thread -lpthread
 
 array:
-	$(CC) src/array_remove.c -o array.out -lpthread -lrt
+	$(CC) src/array_remove.c -o array_remove -lpthread -lrt
 
 clean:
 	rm -rf *.out || true

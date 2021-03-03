@@ -53,3 +53,7 @@ dkms.conf
 
 # VSCode undesired folders
 .vscode/
+
+# Binaries
+array_remove
+hello_thread
